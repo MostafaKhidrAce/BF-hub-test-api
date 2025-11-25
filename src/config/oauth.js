@@ -15,7 +15,7 @@ export const OAUTH_CONFIG = {
   get redirectUri() {
     return getRedirectUri()
   },
-  scope: 'athlete:profile events:read events:write file:write metrics:read metrics:write workouts:read workouts:details workouts:wod workouts:plan',
+  scope: 'athlete:profile events:read events:write file:write metrics:read metrics:write workouts:read workouts:details workouts:wod workouts:plan coach:athletes',
   apiBaseUrl: 'https://api.sandbox.trainingpeaks.com',
   appUrl: 'https://app.sandbox.trainingpeaks.com',
 }

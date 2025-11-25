@@ -13,12 +13,15 @@ import WebhooksTest from './components/WebhooksTest'
 import InfoTest from './components/InfoTest'
 import EndpointTester from './components/EndpointTester'
 import ApiDiagnostics from './components/ApiDiagnostics'
+import TrainingCalendar from './components/TrainingCalendar'
+import CoachDashboard from './components/CoachDashboard'
 import './App.css'
 
 function AppContent() {
   const location = useLocation()
   const [authenticated, setAuthenticated] = useState(false)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [currentView, setCurrentView] = useState('api-tests') // 'api-tests', 'training-calendar', 'coach-dashboard'
 
   const checkAuth = () => {
     setAuthenticated(isAuthenticated())
@@ -83,19 +86,53 @@ function AppContent() {
           <header className="app-header">
             <h1>TrainingPeaks API Tester</h1>
             <p className="subtitle">Test and explore the TrainingPeaks Partner API</p>
-            <AuthButton onAuthChange={handleAuthChange} />
+            <div className="header-actions">
+              {authenticated && (
+                <nav className="main-navigation">
+                  <button 
+                    className={`nav-link ${currentView === 'api-tests' ? 'active' : ''}`}
+                    onClick={() => setCurrentView('api-tests')}
+                  >
+                    API Tests
+                  </button>
+                  <button 
+                    className={`nav-link ${currentView === 'training-calendar' ? 'active' : ''}`}
+                    onClick={() => setCurrentView('training-calendar')}
+                  >
+                    Training Calendar
+                  </button>
+                  <button 
+                    className={`nav-link ${currentView === 'coach-dashboard' ? 'active' : ''}`}
+                    onClick={() => setCurrentView('coach-dashboard')}
+                  >
+                    Coach Dashboard
+                  </button>
+                </nav>
+              )}
+              <AuthButton onAuthChange={handleAuthChange} />
+            </div>
           </header>
 
           {authenticated ? (
             <main className="app-main">
-              <div className="info-banner">
-                <p>
-                  <strong>Sandbox Environment:</strong> You're connected to the TrainingPeaks sandbox.
-                  Data is reset every Monday. OAuth tokens expire after 1 hour.
-                </p>
-              </div>
+              {currentView === 'training-calendar' && (
+                <TrainingCalendar />
+              )}
+              
+              {currentView === 'coach-dashboard' && (
+                <CoachDashboard />
+              )}
 
-              <div className="api-tests">
+              {currentView === 'api-tests' && (
+                <>
+                  <div className="info-banner">
+                    <p>
+                      <strong>Sandbox Environment:</strong> You're connected to the TrainingPeaks sandbox.
+                      Data is reset every Monday. OAuth tokens expire after 1 hour.
+                    </p>
+                  </div>
+
+                  <div className="api-tests">
                 <ApiDiagnostics />
                 <InfoTest />
                 <EndpointTester />
@@ -142,7 +179,9 @@ function AppContent() {
                   </h2>
                 </div>
                 <WebhooksTest />
-              </div>
+                  </div>
+                </>
+              )}
             </main>
           ) : (
             <div className="login-prompt">
